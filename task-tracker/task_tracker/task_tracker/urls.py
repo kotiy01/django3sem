@@ -1,0 +1,41 @@
+"""task_tracker URL Configuration
+
+The `urlpatterns` list routes URLs to views. For more information please see:
+    https://docs.djangoproject.com/en/4.1/topics/http/urls/
+Examples:
+Function views
+    1. Add an import:  from my_app import views
+    2. Add a URL to urlpatterns:  path('', views.home, name='home')
+Class-based views
+    1. Add an import:  from other_app.views import Home
+    2. Add a URL to urlpatterns:  path('', Home.as_view(), name='home')
+Including another URLconf
+    1. Import the include() function: from django.urls import include, path
+    2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
+"""
+from django.contrib import admin
+from django.urls import include,path
+from django.conf.urls import include
+from avtoapi.views import *
+from avtoapi.models import *
+from rest_framework.routers import DefaultRouter
+
+
+def trigger_error(request):
+    division_by_zero = 1 / 0
+
+router = DefaultRouter()
+router.register('project', ProjectsViewSet)
+router.register('task', TasksViewSet)
+router.register('executor', ExecutorsViewSet)
+router.register('post',  PostsViewSet)
+router.register('status',  StatusesViewSet)
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('sentry-debug/', trigger_error),
+    path('api/', include(router.urls)),
+    path('api/task-filter/', GetTasksView.as_view()),
+    path('api/executor-filter/', GetExecutorsView.as_view())
+]
+
